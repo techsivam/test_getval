@@ -119,10 +119,28 @@ func main() {
 				}
 
 				keyValueMap_textVal := ""
-				vendorWeight := 0
+
 				keyValueMap_weight := 0
 				keyValueStr := ""
 				switch keyValue := keyValue.(type) {
+				case []interface{}:
+					// Check if keyValue is a slice
+					if len(keyValue) > 0 {
+						// Get the first element of the slice
+						firstElem, ok := keyValue[0].(map[string]interface{})
+						if !ok {
+							fmt.Println("Invalid keyValue format")
+							continue
+						}
+						if text, ok := firstElem["#text"].(string); ok {
+							keyValueMap_textVal = text
+						}
+						if wt, ok := firstElem["weight"].(string); ok {
+							keyValueMap_weight, _ = strconv.Atoi(wt)
+
+						}
+						fmt.Printf("keyName %s:   keyValueMap_textVal: %s  keyValueMap_weight %d \n", keyName, keyValueMap_textVal, keyValueMap_weight)
+					}
 				case map[string]interface{}:
 					// keyValue is a map
 					keyValueMap := keyValue
@@ -134,7 +152,7 @@ func main() {
 					}
 					if wt, ok := keyValueMap["weight"].(string); ok {
 						keyValueMap_weight, _ = strconv.Atoi(wt)
-						vendorWeight = keyValueMap_weight
+
 					}
 					fmt.Printf("keyName %s:   keyValueMap_textVal: %s  keyValueMap_weight %d \n", keyName, keyValueMap_textVal, keyValueMap_weight)
 
@@ -223,9 +241,9 @@ func main() {
 						fmt.Println("textfieldValueStr:", keyValueMap_textVal)
 						fmt.Println("weight:", keyValueMap_weight)
 						fmt.Println("defaultWeight:", defaultWeight)
-						fmt.Println("vendorWeight:", vendorWeight)
+						fmt.Println("keyValueMap_weight:", keyValueMap_weight)
 						// Calculate the final value
-						finalValue = defaultWeight + vendorWeight
+						finalValue = defaultWeight + keyValueMap_weight
 						fmt.Println("finalValue:", finalValue)
 
 					} else if keyMap["vendor"].(string) == keyToken_fieldValue_getSource_value_Attributes {
@@ -234,9 +252,9 @@ func main() {
 
 						defaultWeight = keyToken_fieldValue_default_weight
 						fmt.Println("defaultWeight:", defaultWeight)
-						fmt.Println("vendorWeight:", vendorWeight)
+						fmt.Println("keyValueMap_weight:", keyValueMap_weight)
 						// Calculate the final value
-						finalValue = finalValue + defaultWeight + vendorWeight
+						finalValue = finalValue + defaultWeight + keyValueMap_weight
 						fmt.Println("finalValue:", finalValue)
 
 					}
