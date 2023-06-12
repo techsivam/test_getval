@@ -117,17 +117,7 @@ func main() {
 				if keyName == "value" {
 					continue
 				}
-				/* // Check if keyValue is a map
-				keyValueMap, ok := keyValue.(map[string]interface{})
-				if !ok {
-					fmt.Println("Invalid keyValue format")
-					continue
-				} else {
-					valueStr, ok := keyValue.(string)
-					fmt.Println("Value is a string:", valueStr)
-					fmt.Println("Value is a ok:", ok)
-				} */
-				//var keyValueMap map[string]interface{}
+
 				keyValueMap_textVal := ""
 				vendorWeight := 0
 				keyValueMap_weight := 0
@@ -147,55 +137,16 @@ func main() {
 						vendorWeight = keyValueMap_weight
 					}
 					fmt.Printf("keyName %s:   keyValueMap_textVal: %s  keyValueMap_weight %d \n", keyName, keyValueMap_textVal, keyValueMap_weight)
-					//fmt.Println("Value is a string weight:", weight)
-					//}
+
 				case string:
 					// keyValue is a string
 					keyValueStr = keyValue
-					//fmt.Println("Value is a string keyValue:", keyValue)
-					//fmt.Println("Value is a string keyValueStr:", keyValueStr)
-					/* if keyName == "value" {
-						output_keyName = keyValue
-					} */
+
 					fmt.Printf("keyName  %s :   keyValueStr: %s \n", keyName, keyValueStr)
 				default:
 					fmt.Println("Invalid keyValue format")
 					continue
 				}
-
-				//fmt.Println("output_keyName:", output_keyName)
-				// Extract the required values from the keyValueMap
-
-				// Extract the values
-				/* textfieldValueStr := ""
-				weight := 0 */
-				/* if value, ok := keyValueMap["value"].(map[string]interface{}); ok {
-					if text, ok := value["#text"].(string); ok {
-						textfieldValueStr = text
-					}
-					if wt, ok := value["weight"].(string); ok {
-						weight, _ = strconv.Atoi(wt)
-					}
-				} else {
-					if text, ok := keyValueMap["#text"].(string); ok {
-						textfieldValueStr = text
-					}
-					if wt, ok := keyValueMap["weight"].(string); ok {
-						weight, _ = strconv.Atoi(wt)
-					}
-				}
-
-				fmt.Println("textfieldValueStr:", textfieldValueStr)
-				fmt.Println("weight:", weight)
-
-				// Extract the token value from the keyValueMap
-				fieldValueStr, ok := keyValueMap["value"].(string)
-				if !ok {
-					fmt.Println("Missing or invalid 'value' field in keyValue")
-					continue
-				}
-				fmt.Println("fieldValueStr:", fieldValueStr) */
-				// ... rest of your code for calculating and updating keyValues ...
 
 				fmt.Println("==============================keyToken===================================")
 				// Iterate over the fields of the keyToken map and calculate the values
@@ -264,60 +215,10 @@ func main() {
 					keyToken_fieldValue_getSource_value_Attributes := lowercaseAttributes[strings.ToLower(keyToken_fieldValue_getSource_value)]
 					fmt.Printf("keyToken_fieldValue_getSource_value:  %s  keyToken_fieldValue_getSource_value_Attributes:%s \n", keyToken_fieldValue_getSource_value, keyToken_fieldValue_getSource_value_Attributes)
 
-					/* if len(keyValueStr) > 1 && keyValueStr != strings.ToLower(keyToken_fieldValue_getSource_value) {
-						continue
-					} */
-
-					/* value := lowercaseAttributes[strings.ToLower(keyToken_fieldValue_token)]
-					fmt.Println("before-value:", value)
-					if value == nil {
-						continue
-						// Handle the case when fieldValue does not exist
-						fmt.Println("Field value does not exist")
-						continue
-					}
-
-					fmt.Println("after-value:", value) */
-					// Calculate the default-weight from keytoken.json and vendor.weight from keys.json
 					defaultWeight := 0
-					//vendorWeight := 0
-					//for _, key := range keysList {
-					/* fmt.Println("key:", key)
-					keyMap, ok := key.(map[string]interface{})
-					if !ok {
-						continue
-					}
 
-					valueStr, ok := keyMap["value"].(string)
-					fmt.Println("valueStr:", valueStr)
-					if !ok {
-						continue
-					}
-					//textfieldValueStr := ""
-					//weight := 0
-					_, valueok := keyMap["vendor"].(map[string]interface{})
-					_, typeok := keyMap["type"].(map[string]interface{}) */
-
-					//vendorVal := lowercaseAttributes["vendor"]
-					//	if (valueStr == "*" || valueStr == "ALL" || keyToken_fieldValue_token == "MODEL" || keyToken_fieldValue_token == "VENDOR") && (valueok || typeok) {
 					if output_keyName == "*" || output_keyName == "ALL" {
-						/* if value, ok := keyMap["vendor"].(map[string]interface{}); ok {
-							if text, ok := value["#text"].(string); ok {
-								textfieldValueStr = text
-							}
-							if wt, ok := value["weight"].(string); ok {
-								weight, _ = strconv.Atoi(wt)
-								vendorWeight = weight
-							}
-						} else {
-							if text, ok := keyMap["#text"].(string); ok {
-								textfieldValueStr = text
-							}
-							if wt, ok := keyMap["weight"].(string); ok {
-								weight, _ = strconv.Atoi(wt)
-								vendorWeight = weight
-							}
-						} */
+
 						add_output_result = true
 						fmt.Println("textfieldValueStr:", keyValueMap_textVal)
 						fmt.Println("weight:", keyValueMap_weight)
@@ -326,86 +227,19 @@ func main() {
 						// Calculate the final value
 						finalValue = defaultWeight + vendorWeight
 						fmt.Println("finalValue:", finalValue)
-						// Update the keyValues map
-						/* keyValues[output_keyName] = map[string]interface{}{
-							"BestKey": 0,
-							"Value":   finalValue,
-						} */
-						//defaultWeight = int(keyMap["default-weight"].(float64))
-						//vendorWeight = int(keyMap["weight"].(float64))
-						//break
-						//} else if valueStr == "VENDOR" && keyMap["vendor"].(string) == fieldValueStr {
-						/*
-									else if keyMap["vendor"].(string) == fieldValueStr {
-								defaultWeight = int(keyMap["default-weight"].(float64))
-								vendorWeight = int(keyMap["weight"].(float64))
-								//break
-							}
-						*/
-						//} else if keyMap["vendor"].(string) == fieldValueStr {
 
 					} else if keyMap["vendor"].(string) == keyToken_fieldValue_getSource_value_Attributes {
 						add_output_result = true
 						fmt.Printf("key  %s :   keyValueStr: %s keyToken_fieldValue_getSource_value_Attributes : %s \n", keyName, keyValueStr, keyToken_fieldValue_getSource_value_Attributes)
 
-						/* if keyName == keyToken_fieldValue_getSource_value_Attributes {
-							fmt.Println("keyName == keyToken_fieldValue_getSource_value_Attributes")
-						} */
-						//defaultWeight = int(keyMap["default-weight"].(float64))
-						//vendorWeight = int(keyMap["weight"].(float64))
-
-						//fmt.Println("textfieldValueStr:", textfieldValueStr)
-						//fmt.Println("weight:", weight)
 						defaultWeight = keyToken_fieldValue_default_weight
 						fmt.Println("defaultWeight:", defaultWeight)
 						fmt.Println("vendorWeight:", vendorWeight)
 						// Calculate the final value
 						finalValue = finalValue + defaultWeight + vendorWeight
 						fmt.Println("finalValue:", finalValue)
-						// Update the keyValues map
-						/* keyValues[output_keyName] = map[string]interface{}{
-							"BestKey": 0,
-							"Value":   finalValue,
-						} */
 
-						//break
-					} /*  else {
-						//textfieldValueStr := ""
-						//weight := 0
-						if value, ok := keyMap["vendor"].(map[string]interface{}); ok {
-							if text, ok := value["#text"].(string); ok {
-								textfieldValueStr = text
-							}
-							if wt, ok := value["weight"].(string); ok {
-								weight, _ = strconv.Atoi(wt)
-								vendorWeight = weight
-							}
-						} else {
-							if text, ok := keyMap["#text"].(string); ok {
-								textfieldValueStr = text
-							}
-							if wt, ok := keyMap["weight"].(string); ok {
-								weight, _ = strconv.Atoi(wt)
-								vendorWeight = weight
-							}
-						}
-
-						fmt.Println("textfieldValueStr:", textfieldValueStr)
-						fmt.Println("weight:", weight)
-					} */
-					//}
-					/* fmt.Println("textfieldValueStr:", textfieldValueStr)
-					fmt.Println("weight:", weight)
-					fmt.Println("defaultWeight:", defaultWeight)
-					fmt.Println("vendorWeight:", vendorWeight)
-					// Calculate the final value
-					finalValue := defaultWeight + vendorWeight
-					fmt.Println("finalValue:", finalValue)
-					// Update the keyValues map
-					keyValues[valueStr] = map[string]interface{}{
-						"BestKey": 0,
-						"Value":   finalValue,
-					} */
+					}
 				}
 			}
 
