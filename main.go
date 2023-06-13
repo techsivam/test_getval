@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -91,7 +92,7 @@ func main() {
 		keysList := keys["keys"].(map[string]interface{})["key"].([]interface{})
 		fmt.Println("keysList:", keysList)
 
-		//
+		//keysList
 		for _, key := range keysList {
 			fmt.Println("key-top:", key)
 			output_keyName := ""
@@ -100,7 +101,7 @@ func main() {
 			keyMap, ok := key.(map[string]interface{})
 			if !ok {
 				fmt.Println("Invalid key format")
-				//continue
+
 			}
 			output_keyName, ok = keyMap["value"].(string)
 			if ok {
@@ -108,7 +109,12 @@ func main() {
 			} else {
 				fmt.Println("Invalid value format")
 			}
-
+			ncregexp_Keyvalue, ok := keyMap["ncregexp"].(string)
+			if ok {
+				fmt.Println("ncregexp_Keyvalue:", ncregexp_Keyvalue)
+			} else {
+				fmt.Println("Invalid value format ncregexp_Keyvalue")
+			}
 			// Extract the key-value pair from the map
 			for keyName, keyValue := range key.(map[string]interface{}) {
 				fmt.Println("===============================================")
@@ -146,7 +152,7 @@ func main() {
 					keyValueMap := keyValue
 					fmt.Println("Value is a map:", keyValue)
 					fmt.Println("keyValueMap:", keyValueMap)
-					//if value, ok := keyValueMap["value"].(map[string]interface{}); ok {
+
 					if text, ok := keyValueMap["#text"].(string); ok {
 						keyValueMap_textVal = text
 					}
@@ -176,24 +182,37 @@ func main() {
 					keyToken_fieldValueMap, ok := keyToken_fieldValue.(map[string]interface{})
 					if !ok {
 						fmt.Println("Invalid fieldValue format")
-						//continue
+
 					}
+					//ncregexp
+
+					keyToken_fieldValueStr := fmt.Sprint(keyToken_fieldValue)
+					fmt.Println("keyToken_fieldValueStr:", keyToken_fieldValueStr)
+					matchRegex := false
+					if keyName == "ncregexp" && keyName == keyToken_fieldName && len(keyValueStr) > 1 {
+						equipmentNameUpper := strings.ToUpper(fmt.Sprint(equipmentName))
+
+						ncregexpstr := fmt.Sprint(keyValueStr)
+						fmt.Println("ncregexpstr:", ncregexpstr)
+						ncregexp := regexp.MustCompile(ncregexpstr)
+						matchRegex = ncregexp.Match([]byte(equipmentNameUpper))
+						fmt.Printf("ncregexpstr  %s :   matchRegex: %v \n", ncregexpstr, matchRegex)
+					}
+
 					//token
 					keyToken_fieldValue_token, ok := keyToken_fieldValueMap["token"].(string)
 					if !ok {
 						fmt.Println("Missing or invalid 'token' field in fieldValue")
-						//continue
+
 					}
 
 					fmt.Println("keyToken_fieldValue_token:", keyToken_fieldValue_token)
-					/* if keyName != strings.ToLower(keyToken_fieldValue_token) {
-						continue
-					} */
+
 					//source
 					keyToken_fieldValue_source, ok := keyToken_fieldValueMap["source"].(string)
 					if !ok {
 						fmt.Println("Missing or invalid 'token' field in fieldValue")
-						//continue
+
 					}
 
 					fmt.Println("keyToken_fieldValue_source:", keyToken_fieldValue_source)
@@ -201,7 +220,7 @@ func main() {
 					keyToken_fieldValue_getSource, ok := keyToken_fieldValueMap["getSource"].(string)
 					if !ok {
 						fmt.Println("Missing or invalid 'token' field in fieldValue")
-						//continue
+
 					}
 
 					fmt.Println("keyToken_fieldValue_getSource:", keyToken_fieldValue_getSource)
@@ -210,18 +229,23 @@ func main() {
 					keyToken_fieldValue_getSource_value := ""
 					if strings.Contains(keyToken_fieldValue_getSource, substr) {
 						fmt.Println("======String contains:", substr)
-					} else {
-						fmt.Println("String does not contain", substr)
-					}
-					if strings.Contains(keyToken_fieldValue_getSource, substr) {
 						split := strings.Split(keyToken_fieldValue_getSource, substr)
 						if len(split) > 1 {
 							keyToken_fieldValue_getSource_value = split[1]
 							fmt.Println("========>>>Extracted value:", keyToken_fieldValue_getSource_value)
 						}
 					} else {
-						fmt.Println("String does not contain", substr)
+						keyToken_fieldValue_getSource_value = keyToken_fieldValue_getSource
 					}
+					/* if strings.Contains(keyToken_fieldValue_getSource, substr) {
+						split := strings.Split(keyToken_fieldValue_getSource, substr)
+						if len(split) > 1 {
+							keyToken_fieldValue_getSource_value = split[1]
+							fmt.Println("========>>>Extracted value:", keyToken_fieldValue_getSource_value)
+						}
+					} else {
+						keyToken_fieldValue_getSource_value = keyToken_fieldValue_getSource
+					} */
 
 					//default-weight
 					keyToken_fieldValue_default_weight := int(keyToken_fieldValueMap["default-weight"].(float64))
@@ -232,25 +256,29 @@ func main() {
 
 					keyToken_fieldValue_getSource_value_Attributes := lowercaseAttributes[strings.ToLower(keyToken_fieldValue_getSource_value)]
 					fmt.Printf("keyToken_fieldValue_getSource_value:  %s  keyToken_fieldValue_getSource_value_Attributes:%s \n", keyToken_fieldValue_getSource_value, keyToken_fieldValue_getSource_value_Attributes)
-
-					defaultWeight := 0
+					keyToken_fieldValue_getSource_value_AttributesStr := ""
+					if keyToken_fieldValue_getSource_value_Attributes != nil {
+						keyToken_fieldValue_getSource_value_AttributesStr = fmt.Sprint(keyToken_fieldValue_getSource_value_Attributes)
+					}
+					fmt.Println("keyToken_fieldValue_getSource_value_AttributesStr:", keyToken_fieldValue_getSource_value_AttributesStr)
 
 					if output_keyName == "*" || output_keyName == "ALL" {
 
 						add_output_result = true
 						fmt.Println("textfieldValueStr:", keyValueMap_textVal)
 						fmt.Println("weight:", keyValueMap_weight)
-						fmt.Println("defaultWeight:", defaultWeight)
+
 						fmt.Println("keyValueMap_weight:", keyValueMap_weight)
 						// Calculate the final value
-						finalValue = defaultWeight + keyValueMap_weight
+
+						finalValue = keyValueMap_weight
 						fmt.Println("finalValue:", finalValue)
 
-					} else if keyMap["vendor"].(string) == keyToken_fieldValue_getSource_value_Attributes {
+					} else if (keyName == keyToken_fieldName && len(keyValueStr) > 1 && len(keyToken_fieldValue_getSource_value_AttributesStr) > 1 && keyValueStr == keyToken_fieldValue_getSource_value_AttributesStr) || (matchRegex) {
 						add_output_result = true
-						fmt.Printf("key  %s :   keyValueStr: %s keyToken_fieldValue_getSource_value_Attributes : %s \n", keyName, keyValueStr, keyToken_fieldValue_getSource_value_Attributes)
+						fmt.Printf("key  %s :   keyValueStr: %s keyToken_fieldValue_getSource_value_AttributesStr : %s \n", keyName, keyValueStr, keyToken_fieldValue_getSource_value_AttributesStr)
 
-						defaultWeight = keyToken_fieldValue_default_weight
+						defaultWeight := keyToken_fieldValue_default_weight
 						fmt.Println("defaultWeight:", defaultWeight)
 						fmt.Println("keyValueMap_weight:", keyValueMap_weight)
 						// Calculate the final value
@@ -258,26 +286,27 @@ func main() {
 						fmt.Println("finalValue:", finalValue)
 
 					}
-				}
-			}
+				} //keyToken
+				//}
+			} //Extract the key-value pair from the map
 
 			// put finalValue and output_key
 			if add_output_result {
 				keyValues[output_keyName] = map[string]interface{}{
-					"BestKey": 0,
-					"Value":   finalValue,
+					"bestkey": 0,
+					"value":   finalValue,
 				}
 			}
 
-		}
+		} //keysList
 		//
 
 		// Construct the final output
 		output := map[string]interface{}{
-			"EquipmentName": equipmentName,
-			"Keys":          keyValues,
-			"Namespace":     namespace,
-			"Transaction":   transaction,
+			"equipmentname": equipmentName,
+			"keys":          keyValues,
+			"namespace":     namespace,
+			"transaction":   transaction,
 		}
 
 		// Convert the output to JSON
