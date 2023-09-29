@@ -1,0 +1,64 @@
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func getRootTagContent(xmlData string) string {
+	// Find the start and end index of the root element
+	startIndex := strings.Index(xmlData, "<")
+	endIndex := strings.Index(xmlData, ">")
+	if startIndex == -1 || endIndex == -1 {
+		//return "", fmt.Errorf("could not find root element")
+		return ""
+	}
+
+	// Extract the root element
+	//rootElement := xmlData[startIndex : endIndex+1]
+
+	// Find the start and end index of the content within the root element
+	contentStartIndex := endIndex + 1
+	contentEndIndex := strings.LastIndex(xmlData, "</")
+	if contentEndIndex == -1 {
+		//return "", fmt.Errorf("could not find content within the root element")
+		return ""
+	}
+
+	// Extract the content within the root element
+	rootContent := xmlData[contentStartIndex:contentEndIndex]
+	return rootContent
+	//return rootElement + rootContent + "</" + rootElement[1:], nil
+}
+
+func main() {
+	xmlData := `<IF_EXIST value="comm">
+	<IF_EXIST value="source">
+	  command [<VAR value="comm"/>] | sds command <VAR value="source"/>
+	</IF_EXIST>
+	<IF_NOTEXIST value="source">
+	command  not source command2
+	</IF_NOTEXIST>
+</IF_EXIST>`
+
+	/* content, err := getRootTagContent(xmlData)
+	if err != nil {
+		fmt.Println("Error:", err)
+	} else {
+		fmt.Println("Root element content:")
+		fmt.Println(content)
+	} */
+	content := getRootTagContent(xmlData)
+
+	fmt.Println("Root element content:")
+	fmt.Println(content)
+
+	xmlData1 := `<IF_NOTEXIST value="source">
+	command  not source command2
+	</IF_NOTEXIST>`
+	content1 := getRootTagContent(xmlData1)
+
+	fmt.Println("Root element content1:")
+	fmt.Println(content1)
+
+}
